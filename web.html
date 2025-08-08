@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SOP Interactive Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        :root {
+            --blue1: #1565c0;
+            --blue2: #42a5f5;
+            --blue3: #e3f2fd;
+            --white: #fff;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, var(--blue3) 0%, var(--white) 100%);
+            min-height: 100vh;
+            color: #1565c0;
+        }
+        header {
+            background: linear-gradient(90deg, var(--blue1), var(--blue2));
+            color: #fff;
+            padding: 2rem 1rem 1rem 1rem;
+            text-align: center;
+            border-bottom-left-radius: 35px;
+            border-bottom-right-radius: 35px;
+            box-shadow: 0 4px 14px rgba(21,101,192,0.09);
+        }
+        header h1 {
+            font-size: 2.5rem;
+            letter-spacing: 2px;
+            margin-bottom: .5rem;
+        }
+        header p {
+            font-size: 1.1rem;
+        }
+        main {
+            max-width: 900px;
+            margin: 2rem auto;
+            background: var(--white);
+            border-radius: 22px;
+            box-shadow: 0 6px 24px rgba(66,165,245,0.13);
+            padding: 2rem 2.5rem 2.5rem 2.5rem;
+        }
+        .dashboard {
+            display: none;
+        }
+        .dashboard.active {
+            display: block;
+            animation: fadeIn 0.8s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0;}
+            to { opacity: 1;}
+        }
+        /* Character Section */
+        .character-box {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        .sop-character {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(145deg, var(--blue2) 60%, var(--white) 100%);
+            border: 5px solid var(--blue1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(21,101,192,0.18);
+            position: relative;
+            overflow: hidden;
+        }
+        /* Simple SVG character face */
+        .sop-character svg {
+            width: 90px;
+            height: 90px;
+        }
+        .intro-text {
+            font-size: 1.15rem;
+            color: var(--blue1);
+            font-weight: 500;
+        }
+        .start-btn {
+            margin-top: 2rem;
+            background: linear-gradient(90deg, var(--blue1), var(--blue2));
+            color: #fff;
+            border: none;
+            padding: 0.9rem 2rem;
+            border-radius: 12px;
+            font-size: 1.15rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(66,165,245,0.14);
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+        .start-btn:hover, .back-btn:hover, .restart-btn:hover {
+            background: linear-gradient(90deg, var(--blue2), var(--blue1));
+            box-shadow: 0 4px 16px rgba(21,101,192,0.16);
+        }
+        .quiz-box {
+            background: var(--blue3);
+            border: 2px solid var(--blue2);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 14px rgba(66,165,245,0.07);
+        }
+        .quiz-question {
+            color: var(--blue1);
+            font-size: 1.1rem;
+            margin-bottom: 1.2rem;
+        }
+        .quiz-options button {
+            display: block;
+            width: 100%;
+            background: linear-gradient(90deg, var(--blue2), var(--blue3));
+            color: var(--blue1);
+            border: none;
+            border-radius: 10px;
+            padding: 0.7rem;
+            margin-bottom: 0.8rem;
+            font-size: 1rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s, color 0.2s;
+        }
+        .quiz-options button:hover:not([disabled]) {
+            background: linear-gradient(90deg, var(--blue1), var(--blue2));
+            color: #fff;
+        }
+        .quiz-feedback {
+            margin-top: 0.8rem;
+            font-weight: bold;
+            font-size: 1.1rem;
+            min-height: 1.2rem;
+        }
+        .quiz-score {
+            margin-top: 1.2rem;
+            font-size: 1.1rem;
+            color: var(--blue1);
+        }
+        .restart-btn, .back-btn {
+            margin-top: 1.4rem;
+            background: linear-gradient(90deg, var(--blue2), var(--blue1));
+            color: #fff;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        /* Definition Card */
+        .sop-definition {
+            background: linear-gradient(120deg, #e3f2fd 80%, #bbdefb 100%);
+            color: var(--blue1);
+            border-radius: 18px;
+            box-shadow: 0 4px 18px rgba(66,165,245,0.10);
+            padding: 2rem 1.5rem;
+            margin-bottom: 2rem;
+            font-size: 1.14rem;
+        }
+        .sop-definition h2 {
+            color: var(--blue2);
+            margin-bottom: 0.5rem;
+        }
+        .sop-definition ul {
+            margin: 1rem 0 0 2rem;
+        }
+        @media (max-width: 700px) {
+            main { padding: 1rem; }
+            .character-box { flex-direction: column; gap: 1rem;}
+            .sop-character { width: 90px; height: 90px;}
+            .quiz-box, .sop-definition { padding: 1rem;}
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>SOP Interactive Dashboard</h1>
+        <p>Explore, learn, and quiz yourself about Standard Operational Procedures!</p>
+    </header>
+    <main>
+        <!-- Main Dashboard -->
+        <div id="dashboard1" class="dashboard active">
+            <div class="character-box">
+                <div class="sop-character">
+                    <!-- Cute blue SOP mascot SVG -->
+                    <svg viewBox="0 0 90 90" fill="none">
+                      <circle cx="45" cy="45" r="44" fill="#e3f2fd" stroke="#1565c0" stroke-width="2"/>
+                      <ellipse cx="45" cy="55" rx="23" ry="18" fill="#42a5f5" fill-opacity="0.2"/>
+                      <ellipse cx="30" cy="40" rx="8" ry="10" fill="#42a5f5"/>
+                      <ellipse cx="60" cy="40" rx="8" ry="10" fill="#42a5f5"/>
+                      <ellipse cx="30" cy="40" rx="3" ry="4" fill="#fff"/>
+                      <ellipse cx="60" cy="40" rx="3" ry="4" fill="#fff"/>
+                      <ellipse cx="45" cy="61" rx="10" ry="4" fill="#fff"/>
+                      <ellipse cx="45" cy="59" rx="5" ry="2" fill="#42a5f5"/>
+                      <ellipse cx="45" cy="75" rx="3" ry="1.2" fill="#90caf9"/>
+                    </svg>
+                </div>
+                <div class="intro-text">
+                    <p>
+                        <b>Hello! I'm SOPI, your SOP explorer friend.</b><br><br>
+                        Welcome to the Standard Operational Procedure (SOP) Interactive Dashboard!<br>
+                        <br>
+                        Here you'll learn what SOPs are, why they're important, and test your knowledge with fun quizzes.
+                    </p>
+                </div>
+            </div>
+            <div style="text-align:center;">
+                <button class="start-btn" onclick="goToDashboard2()">Start Exploring & Quiz &rarr;</button>
+            </div>
+        </div>
+        <!-- Second Dashboard (Quiz and SOP Info) -->
+        <div id="dashboard2" class="dashboard">
+            <div class="quiz-box" id="quiz-box">
+                <!-- Quiz will be injected here by JavaScript -->
+            </div>
+            <div class="sop-definition" id="sop-def">
+                <h2>What is a Standard Operational Procedure (SOP)?</h2>
+                <p>
+                    A <b>Standard Operational Procedure (SOP)</b> is a written document that provides step-by-step instructions to help workers carry out routine operations. SOPs are designed to ensure consistency, efficiency, and quality in organizational processes.
+                </p>
+                <h2>Why Use Standard Operational Procedures?</h2>
+                <ul>
+                    <li><b>Consistency:</b> Ensures tasks are performed the same way every time.</li>
+                    <li><b>Quality:</b> Maintains high standards and reduces errors.</li>
+                    <li><b>Training:</b> Helps new employees learn processes faster.</li>
+                    <li><b>Compliance:</b> Assists with meeting regulations and standards.</li>
+                    <li><b>Efficiency:</b> Saves time and resources by streamlining work.</li>
+                </ul>
+                <h2>Key Parts of an SOP:</h2>
+                <ul>
+                    <li><b>Purpose:</b> Why the SOP exists.</li>
+                    <li><b>Scope:</b> Where, when, and to whom the SOP applies.</li>
+                    <li><b>Procedure:</b> Step-by-step instructions.</li>
+                    <li><b>Responsibilities:</b> Who is responsible for each step.</li>
+                    <li><b>Review & Update:</b> Regular improvements and checks.</li>
+                </ul>
+            </div>
+            <div style="display:flex; gap: 1rem; flex-wrap:wrap;">
+                <button class="restart-btn" onclick="restartQuiz()">Restart Quiz</button>
+                <button class="back-btn" onclick="goToDashboard1()">&larr; Back to Main Dashboard</button>
+            </div>
+        </div>
+    </main>
+<script>
+    // Quiz data
+    const quizData = [
+        {
+            question: "What does SOP stand for?",
+            options: [
+                "Standard Operational Procedure",
+                "Simple Operation Policy",
+                "Systematic Order Plan",
+                "Standard Output Process"
+            ],
+            answer: 0
+        },
+        {
+            question: "Why are SOPs important?",
+            options: [
+                "To make tasks more confusing",
+                "To ensure consistency and quality",
+                "To increase mistakes",
+                "To reduce productivity"
+            ],
+            answer: 1
+        },
+        {
+            question: "Which of these is a key part of an SOP?",
+            options: [
+                "Random instructions",
+                "Step-by-step procedures",
+                "Personal opinions",
+                "Unrelated images"
+            ],
+            answer: 1
+        },
+        {
+            question: "Who benefits from SOPs?",
+            options: [
+                "Only managers",
+                "New employees",
+                "Everyone in the organization",
+                "Only customers"
+            ],
+            answer: 2
+        },
+        {
+            question: "How often should SOPs be reviewed and updated?",
+            options: [
+                "Never",
+                "Only when something goes wrong",
+                "Regularly",
+                "Every hour"
+            ],
+            answer: 2
+        }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    function goToDashboard2() {
+        document.getElementById('dashboard1').classList.remove('active');
+        document.getElementById('dashboard2').classList.add('active');
+        currentQuestion = 0;
+        score = 0;
+        loadQuiz();
+        document.getElementById('sop-def').style.display = "block";
+    }
+
+    function goToDashboard1() {
+        document.getElementById('dashboard2').classList.remove('active');
+        document.getElementById('dashboard1').classList.add('active');
+    }
+
+    function loadQuiz() {
+        const quizBox = document.getElementById('quiz-box');
+        if (currentQuestion < quizData.length) {
+            const q = quizData[currentQuestion];
+            quizBox.innerHTML = `
+                <div class="quiz-question">${currentQuestion+1}. ${q.question}</div>
+                <div class="quiz-options">
+                    ${q.options.map((opt, i) => `
+                        <button onclick="checkAnswer(${i})" id="option${i}">${opt}</button>
+                    `).join('')}
+                </div>
+                <div class="quiz-feedback" id="feedback"></div>
+                <div class="quiz-score">Score: ${score} / ${quizData.length}</div>
+            `;
+        } else {
+            quizBox.innerHTML = `
+                <div class="quiz-score" style="font-size:1.4rem;">
+                    🎉 You scored <b>${score}</b> out of <b>${quizData.length}</b>!
+                </div>
+            `;
+        }
+    }
+
+    window.checkAnswer = function(selected) {
+        const q = quizData[currentQuestion];
+        const feedback = document.getElementById('feedback');
+        const buttons = document.querySelectorAll('.quiz-options button');
+        buttons.forEach(btn => btn.disabled = true);
+        if (selected === q.answer) {
+            feedback.innerHTML = "<span style='color:#42a5f5'>Correct! 🎉</span>";
+            score++;
+        } else {
+            feedback.innerHTML = `<span style='color:#e53935'>Incorrect.</span> The right answer is: <b>${q.options[q.answer]}</b>`;
+        }
+        setTimeout(() => {
+            currentQuestion++;
+            loadQuiz();
+        }, 1200);
+    };
+
+    window.restartQuiz = function() {
+        currentQuestion = 0;
+        score = 0;
+        loadQuiz();
+        document.getElementById('sop-def').style.display = "block";
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+
+    // On load, show first dashboard
+    document.getElementById('dashboard1').classList.add('active');
+    document.getElementById('dashboard2').classList.remove('active');
+</script>
+</body>
+</html>
