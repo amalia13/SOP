@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Standard Operational Procedure (SOP) Interactive Guide</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f7f7f7; }
+        header { background: #2d3e50; color: #fff; padding: 1em 2em; }
+        main { padding: 2em; }
+        section { background: #fff; margin-bottom: 1.5em; padding: 1.5em; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);}
+        h1, h2 { margin-top: 0; }
+        .quiz-question { margin-bottom: 1em; }
+        .quiz-option { display: block; margin-bottom: 0.5em; }
+        .quiz-feedback { font-weight: bold; margin-top: 1em; }
+        .form-group { margin-bottom: 1em; }
+        label { display: block; margin-bottom: 0.3em; }
+        input, textarea, select { width: 100%; padding: 0.5em; border-radius: 4px; border: 1px solid #ccc; }
+        button { padding: 0.6em 1.5em; border: none; border-radius: 4px; background: #2d3e50; color: #fff; font-size: 1em; cursor: pointer; }
+        button:disabled { background: #aaa; }
+        .success { color: green; font-weight: bold; }
+        .error { color: red; font-weight: bold; }
+        @media (max-width: 600px) {
+            main { padding: 1em; }
+            section { padding: 1em; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Standard Operational Procedure (SOP) Interactive Guide</h1>
+    </header>
+    <main>
+        <!-- SOP Section -->
+        <section id="sop-section">
+            <h2>What is a Standard Operational Procedure?</h2>
+            <p>
+                A Standard Operational Procedure (SOP) is a set of step-by-step instructions compiled by an organization to help workers carry out routine operations. SOPs aim to achieve efficiency, quality output, and uniformity of performance, while reducing miscommunication and failure to comply with industry regulations.
+            </p>
+            <ul>
+                <li><b>Consistency:</b> Ensures tasks are performed consistently every time.</li>
+                <li><b>Safety:</b> Minimizes the risk of accidents and errors.</li>
+                <li><b>Training:</b> Serves as a guide for new employees.</li>
+                <li><b>Quality Control:</b> Helps maintain product or service quality.</li>
+            </ul>
+        </section>
+
+        <!-- Quiz Section -->
+        <section id="quiz-section">
+            <h2>Quick SOP Quiz</h2>
+            <form id="quiz-form">
+                <div class="quiz-question">
+                    <label><b>1. What is the main purpose of an SOP?</b></label>
+                    <label class="quiz-option"><input type="radio" name="q1" value="a"> To reduce costs only</label>
+                    <label class="quiz-option"><input type="radio" name="q1" value="b"> To provide step-by-step instructions for consistent operations</label>
+                    <label class="quiz-option"><input type="radio" name="q1" value="c"> To increase paperwork</label>
+                </div>
+                <div class="quiz-question">
+                    <label><b>2. Who should follow the SOP?</b></label>
+                    <label class="quiz-option"><input type="radio" name="q2" value="a"> Only managers</label>
+                    <label class="quiz-option"><input type="radio" name="q2" value="b"> All employees involved in the procedure</label>
+                    <label class="quiz-option"><input type="radio" name="q2" value="c"> External partners only</label>
+                </div>
+                <div class="quiz-question">
+                    <label><b>3. Which of these is NOT a benefit of SOP?</b></label>
+                    <label class="quiz-option"><input type="radio" name="q3" value="a"> Ensures uniformity</label>
+                    <label class="quiz-option"><input type="radio" name="q3" value="b"> Increases miscommunication</label>
+                    <label class="quiz-option"><input type="radio" name="q3" value="c"> Improves quality control</label>
+                </div>
+                <button type="button" onclick="submitQuiz()">Submit Quiz</button>
+                <div id="quiz-feedback" class="quiz-feedback"></div>
+            </form>
+        </section>
+
+        <!-- Feedback/Form Section -->
+        <section id="feedback-section">
+            <h2>Suggest an SOP or Give Feedback</h2>
+            <form id="feedback-form">
+                <div class="form-group">
+                    <label for="name">Your Name:</label>
+                    <input type="text" id="name" name="name" required maxlength="50">
+                </div>
+                <div class="form-group">
+                    <label for="email">Your Email:</label>
+                    <input type="email" id="email" name="email" required maxlength="100">
+                </div>
+                <div class="form-group">
+                    <label for="type">Type of Submission:</label>
+                    <select id="type" name="type">
+                        <option value="feedback">Feedback</option>
+                        <option value="suggestion">SOP Suggestion</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="message">Message or SOP Suggestion:</label>
+                    <textarea id="message" name="message" rows="4" required maxlength="1000"></textarea>
+                </div>
+                <button type="submit">Submit</button>
+                <div id="form-response"></div>
+            </form>
+        </section>
+    </main>
+    <script>
+        // Quiz logic
+        function submitQuiz() {
+            const answers = {
+                q1: "b",
+                q2: "b",
+                q3: "b"
+            };
+            let score = 0;
+            let total = 3;
+            let feedback = [];
+            for (let i = 1; i <= total; i++) {
+                const selected = document.querySelector('input[name="q'+i+'"]:checked');
+                if (selected && selected.value === answers['q'+i]) {
+                    score++;
+                }
+            }
+            if (score === total) {
+                feedback = `<span class="success">Excellent! You got all questions right 🎉</span>`;
+            } else {
+                feedback = `<span class="error">You got ${score} out of ${total} correct. Review the SOP section and try again!</span>`;
+            }
+            document.getElementById('quiz-feedback').innerHTML = feedback;
+        }
+
+        // Feedback form logic (dummy, no backend)
+        document.getElementById('feedback-form').onsubmit = function(e) {
+            e.preventDefault();
+            // Basic validation
+            let name = document.getElementById('name').value.trim();
+            let email = document.getElementById('email').value.trim();
+            let message = document.getElementById('message').value.trim();
+            if (!name || !email || !message) {
+                document.getElementById('form-response').innerHTML = '<span class="error">Please fill in all fields.</span>';
+                return;
+            }
+            // Simulate success
+            document.getElementById('form-response').innerHTML = '<span class="success">Thank you! Your submission has been received.</span>';
+            document.getElementById('feedback-form').reset();
+        };
+    </script>
+</body>
+</html>
